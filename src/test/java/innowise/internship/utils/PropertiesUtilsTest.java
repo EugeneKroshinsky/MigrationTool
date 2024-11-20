@@ -2,18 +2,20 @@ package innowise.internship.utils;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Properties;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class PropertiesUtilsTest {
-    private final PropertiesUtils propertiesUtils
-            = new PropertiesUtils("testApplication.properties");
+
     @Test
     public void testVariable() {
-        String testValue = propertiesUtils.getProperty("testVariable");
-        assertEquals("testValue", testValue);
+        Properties properties = PropertiesUtils.getProperties("testVariable");
+        assertEquals("testValue", properties.getProperty("testVariable"));
     }
     @Test
     public void testNotExistVariable() {
-        assertThrows(IllegalArgumentException.class, () -> propertiesUtils.getProperty("notExistVariable"));
+        assertThrows(IllegalArgumentException.class
+                , () -> PropertiesUtils.getProperties("notExistVariable"));
     }
 }
