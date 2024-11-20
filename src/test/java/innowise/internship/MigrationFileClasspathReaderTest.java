@@ -1,6 +1,7 @@
     package innowise.internship;
 
-    import org.junit.jupiter.api.BeforeAll;
+    import innowise.internship.services.MigrationFileClasspathReader;
+    import innowise.internship.services.MigrationFileReader;
     import org.junit.jupiter.api.Test;
     import org.mockito.Mockito;
 

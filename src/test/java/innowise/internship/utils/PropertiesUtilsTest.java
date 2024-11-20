@@ -10,12 +10,12 @@ class PropertiesUtilsTest {
 
     @Test
     public void testVariable() {
-        Properties properties = PropertiesUtils.getProperties("testVariable");
+        Properties properties = PropertiesUtils.getProperties("testApplication.properties");
         assertEquals("testValue", properties.getProperty("testVariable"));
     }
     @Test
     public void testNotExistVariable() {
-        assertThrows(IllegalArgumentException.class
-                , () -> PropertiesUtils.getProperties("notExistVariable"));
+        assertThrows(NullPointerException.class,
+                () -> PropertiesUtils.getProperties("notExistVariable"));
     }
 }

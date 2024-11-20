@@ -1,4 +1,4 @@
-package innowise.internship;
+package innowise.internship.services;
 
 import java.net.URL;
 import java.nio.file.Files;

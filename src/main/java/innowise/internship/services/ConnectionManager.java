@@ -1,4 +1,4 @@
-package innowise.internship;
+package innowise.internship.services;
 
 import innowise.internship.utils.PropertiesUtils;
 import lombok.Getter;

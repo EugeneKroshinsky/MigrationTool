@@ -1,5 +1,8 @@
 package innowise.internship;
 
+import innowise.internship.services.ConnectionManager;
+import innowise.internship.services.MigrationFileClasspathReader;
+import innowise.internship.services.MigrationFileReader;
 import innowise.internship.utils.PropertiesUtils;
 
 import java.sql.Connection;
