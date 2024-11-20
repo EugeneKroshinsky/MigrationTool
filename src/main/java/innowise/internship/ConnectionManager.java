@@ -1,19 +1,29 @@
 package innowise.internship;
 
 import innowise.internship.utils.PropertiesUtils;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+@Slf4j
 public class ConnectionManager {
-    public Connection getConnection(String propertiesPath) throws SQLException {
-        Properties properties = PropertiesUtils.getProperties(propertiesPath);
+    private static final String PROPERTIES_FILE_NAME = "application.properties";
+    @Getter private static final Connection connection;
+    static {
+        log.info("Loading JDBC Driver");
+        Properties properties = PropertiesUtils.getProperties(PROPERTIES_FILE_NAME);
         String url = properties.getProperty("db.url");
         String username = properties.getProperty("db.username");
         String password = properties.getProperty("db.password");
-        return DriverManager.getConnection(url, username, password);
+        try {
+            connection = DriverManager.getConnection(url, username, password);
+        } catch (SQLException e) {
+            log.error("Failed to create connection", e);
+            throw new RuntimeException("Failed to create connection", e);
+        }
     }
 }
-
