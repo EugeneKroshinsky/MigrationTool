@@ -1,5 +1,7 @@
 package innowise.internship.services;
 
+import innowise.internship.dto.FileInfo;
+
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,8 +18,8 @@ public class MigrationFileClasspathReader implements MigrationFileReader {
     }
 
     @Override
-    public List<String> getMigrationFiles() {
-        List<String> migrationFiles = new ArrayList<>();
+    public List<FileInfo> getMigrationFiles() {
+        List<FileInfo> migrationFiles = new ArrayList<>();
         try {
             String resourcePath = properties.getProperty("filepath");
             URL resource = getClass().getClassLoader().getResource(resourcePath);
@@ -27,9 +29,10 @@ public class MigrationFileClasspathReader implements MigrationFileReader {
 
             Path path = Paths.get(resource.toURI());
             Files.walk(path)
-                    .map(Path::toString)
-                    .filter(name -> name.endsWith(".sql"))
+                    .filter(pth -> pth.toString().endsWith(".sql"))
                     .sorted()
+                    .map(FileInfo::new)
+                    .filter(FileInfo::isCorrect)
                     .forEach(migrationFiles::add);
         } catch (Exception e) {
             throw new RuntimeException("Failed to load migration files", e);

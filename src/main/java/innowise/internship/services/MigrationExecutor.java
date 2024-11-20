@@ -7,5 +7,4 @@ public class MigrationExecutor {
     public void createTableIfNotExist() {
 
     }
-
 }
