@@ -1,21 +1,24 @@
 package innowise.internship.services;
 
-import innowise.internship.dto.FileInfo;
+import innowise.internship.utils.PropertiesUtils;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Properties;
 
 public class MigrationExecutor {
-    private Connection connection = ConnectionManager.getConnection();
-    private SQLReader sqlReader = new SQLReader();
+    private final Connection connection = ConnectionManager.getConnection();
+    private final SQLReader sqlReader = new SQLReader();
+    private final Properties properties = PropertiesUtils.getProperties("application.properties");
 
     public void createMigrationTableIfNotExist() {
-        List<String> sqlFile
-                = sqlReader.readSQLFile(Paths.get("C:\\github\\MigrationTool\\src\\main\\resources\\db\\migration\\default_scripts\\migration_history.sql"));
+        Path path = Paths.get(properties.getProperty("concurrency.script.path"));
+        List<String> sqlFile = sqlReader.readSQLFile(path);
         try(Statement statement = connection.createStatement()) {
             StringBuilder result = new StringBuilder();
             sqlFile.forEach(line ->  result.append(line + "\n"));
@@ -25,8 +28,8 @@ public class MigrationExecutor {
         }
     }
     public void createConcurrencyTableIfNotExist() {
-        List<String> sqlFile
-                = sqlReader.readSQLFile(Paths.get("C:\\github\\MigrationTool\\src\\main\\resources\\db\\migration\\default_scripts\\concurrency_flag.sql"));
+        Path path = Paths.get(properties.getProperty("migration.script.path"));
+        List<String> sqlFile = sqlReader.readSQLFile(path);
         try(Statement statement = connection.createStatement()) {
             StringBuilder result = new StringBuilder();
             sqlFile.forEach(line ->  result.append(line + "\n"));
@@ -60,4 +63,40 @@ public class MigrationExecutor {
 //            e.printStackTrace();
 //        }
 //    }
+
+    public void lockDatabase() {
+        while (isLocked()) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        try (Statement statement = connection.createStatement()) {
+            String query = "UPDATE variables SET value = true";
+            statement.executeUpdate(query);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+    public void unlockDatabase() {
+        try (Statement statement = connection.createStatement()) {
+            String query = "UPDATE variables SET value = false";
+            statement.executeUpdate(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    private boolean isLocked() {
+        boolean isLocked = false;
+        try (Statement statement = connection.createStatement()) {
+            String query = "SELECT value from variables";
+            ResultSet resultSet = statement.executeQuery(query);
+            resultSet.next();
+            isLocked = resultSet.getBoolean("value");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return isLocked;
+    }
 }

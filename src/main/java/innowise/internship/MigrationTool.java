@@ -17,6 +17,8 @@ public class MigrationTool {
         MigrationExecutor migrationExecutor = new MigrationExecutor();
         migrationExecutor.createMigrationTableIfNotExist();
         migrationExecutor.createConcurrencyTableIfNotExist();
+        migrationExecutor.lockDatabase();
         //migrationExecutor.executeMigration(migrationFiles);
+        migrationExecutor.unlockDatabase();
     }
 }
