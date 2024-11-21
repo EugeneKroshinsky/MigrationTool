@@ -33,17 +33,19 @@ public class MigrationTool {
 
     public static void run (){
         log.info("MigrationTool start run");
+        migrationExecutor.createMigrationTableIfNotExist();
+        migrationExecutor.createConcurrencyTableIfNotExist();
         List<FileInfo> migrationFiles = migrationFileReader.getMigrationFiles();
-        executeMigrations(migrationFiles);
+        List<FileInfo> migrationFilesToExecute = migrationManager.getNewMigrations(migrationFiles);
+        if (!migrationFilesToExecute.isEmpty()) {
+            executeMigrations(migrationFilesToExecute);
+        }
         log.info("MigrationTool finish run");
     }
 
     private static void executeMigrations(List<FileInfo> migrationFiles) {
-        migrationExecutor.createMigrationTableIfNotExist();
-        migrationExecutor.createConcurrencyTableIfNotExist();
-        List<FileInfo> migrationFileToExecute = migrationManager.getNewMigrations(migrationFiles);
-        migrationExecutor.lockDatabase();
-        migrationExecutor.executeMigration(migrationFileToExecute);
-        migrationExecutor.unlockDatabase();
+            migrationExecutor.lockDatabase();
+            migrationExecutor.executeMigration(migrationFiles);
+            migrationExecutor.unlockDatabase();
     }
 }
