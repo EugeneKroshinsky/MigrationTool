@@ -1,4 +1,4 @@
-crete table hello_world (
+create table hello_world (
     id serial primary key,
     message text
 );

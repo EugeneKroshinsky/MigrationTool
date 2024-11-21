@@ -13,13 +13,14 @@ import java.util.Properties;
 @Slf4j
 public class ConnectionManager {
     private static final String PROPERTIES_FILE_NAME = "application.properties";
-    @Getter private static final Connection connection;
+    @Getter private static Connection connection;
     static {
         log.info("ConnectionManager initialization");
         Properties properties = PropertiesUtils.getProperties(PROPERTIES_FILE_NAME);
         String url = properties.getProperty("db.url");
         String username = properties.getProperty("db.username");
         String password = properties.getProperty("db.password");
+
         try {
             connection = DriverManager.getConnection(url, username, password);
             log.info("Connection has been created");
