@@ -1,6 +1,7 @@
 package innowise.internship.services;
 
 import innowise.internship.utils.PropertiesUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -10,27 +11,30 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
+@Slf4j
 public class MigrationExecutor {
     private final Connection connection = ConnectionManager.getConnection();
     private final SQLReader sqlReader = new SQLReader();
     private final Properties properties = PropertiesUtils.getProperties("application.properties");
 
     public void createMigrationTableIfNotExist() {
+        log.info("Creating migration table if not exist");
         Path path = Paths.get(properties.getProperty("concurrency.script.path"));
         String sqlFile = sqlReader.read(path);
         try(Statement statement = connection.createStatement()) {
             statement.execute(sqlFile);
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to create migration table", e);
         }
     }
     public void createConcurrencyTableIfNotExist() {
+        log.info("Creating concurrency table if not exist");
         Path path = Paths.get(properties.getProperty("migration.script.path"));
         String sqlFile = sqlReader.read(path);
         try(Statement statement = connection.createStatement()) {
             statement.execute(sqlFile);
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to create concurrency table", e);
         }
     }
 //    public void executeMigration(List<FileInfo> migrationFiles) {
@@ -60,26 +64,30 @@ public class MigrationExecutor {
 //    }
 
     public void lockDatabase() {
+        log.info("Start locking database");
         while (isLocked()) {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                log.error("Failed to lock database(deadlock)", e);
             }
         }
         try (Statement statement = connection.createStatement()) {
             String query = "UPDATE variables SET value = true";
             statement.executeUpdate(query);
+            log.info("Database has been locked");
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            log.error("Failed to lock database", ex);
         }
     }
     public void unlockDatabase() {
+        log.info("Start unlocking database");
         try (Statement statement = connection.createStatement()) {
             String query = "UPDATE variables SET value = false";
             statement.executeUpdate(query);
+            log.info("Database has been unlocked");
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.info("Failed to unlock database", e);
         }
     }
     private boolean isLocked() {

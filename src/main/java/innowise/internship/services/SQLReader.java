@@ -1,19 +1,21 @@
 package innowise.internship.services;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Slf4j
 public class SQLReader {
     public List<String> readLines(Path path) {
         List<String> lines = new ArrayList<>();
         try{
             lines = Files.readAllLines(path);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Failed to read file", e);
         }
         return lines;
     }
