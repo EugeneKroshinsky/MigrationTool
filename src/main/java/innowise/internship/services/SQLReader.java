@@ -8,7 +8,7 @@ import java.util.List;
 
 
 public class SQLReader {
-    public List<String> readSQLFile(Path path) {
+    public List<String> readLines(Path path) {
         List<String> lines = new ArrayList<>();
         try{
             lines = Files.readAllLines(path);
@@ -16,5 +16,11 @@ public class SQLReader {
             e.printStackTrace();
         }
         return lines;
+    }
+    public String read(Path path) {
+        List<String> lines = readLines(path);
+        StringBuilder stringBuilder = new StringBuilder();
+        lines.forEach(stringBuilder::append);
+        return stringBuilder.toString();
     }
 }

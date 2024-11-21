@@ -8,7 +8,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
 import java.util.Properties;
 
 public class MigrationExecutor {
@@ -18,22 +17,18 @@ public class MigrationExecutor {
 
     public void createMigrationTableIfNotExist() {
         Path path = Paths.get(properties.getProperty("concurrency.script.path"));
-        List<String> sqlFile = sqlReader.readSQLFile(path);
+        String sqlFile = sqlReader.read(path);
         try(Statement statement = connection.createStatement()) {
-            StringBuilder result = new StringBuilder();
-            sqlFile.forEach(line ->  result.append(line + "\n"));
-            statement.execute(result.toString());
+            statement.execute(sqlFile);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
     public void createConcurrencyTableIfNotExist() {
         Path path = Paths.get(properties.getProperty("migration.script.path"));
-        List<String> sqlFile = sqlReader.readSQLFile(path);
+        String sqlFile = sqlReader.read(path);
         try(Statement statement = connection.createStatement()) {
-            StringBuilder result = new StringBuilder();
-            sqlFile.forEach(line ->  result.append(line + "\n"));
-            statement.execute(result.toString());
+            statement.execute(sqlFile);
         } catch (SQLException e) {
             e.printStackTrace();
         }
