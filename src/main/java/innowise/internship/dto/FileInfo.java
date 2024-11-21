@@ -1,5 +1,6 @@
 package innowise.internship.dto;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -7,6 +8,7 @@ import java.nio.file.Path;
 
 @Getter
 @ToString
+@EqualsAndHashCode
 public class FileInfo {
     private Path path;
     private String filename;

@@ -1,5 +1,6 @@
     package innowise.internship;
 
+    import innowise.internship.dto.FileInfo;
     import innowise.internship.services.MigrationFileClasspathReader;
     import innowise.internship.services.MigrationFileReader;
     import org.junit.jupiter.api.Test;
@@ -20,21 +21,21 @@
         @Test
         void getMigrationFilesSizeTest() {
             when(properties.getProperty("filepath")).thenReturn("db/migration");
-            List<String> expectedFiles = getExpectedFiles();
-            List<String> files = reader.getMigrationFiles();
+            List<FileInfo> expectedFiles = getExpectedFiles();
+            List<FileInfo> files = reader.getMigrationFiles();
             assertEquals(files.size(), expectedFiles.size());
         }
         @Test
         void getMigrationFilesValueTest() {
             when(properties.getProperty("filepath")).thenReturn("db/migration");
-            List<String> expectedFiles = getExpectedFiles();
-            List<String> files = reader.getMigrationFiles();
+            List<FileInfo> expectedFiles = getExpectedFiles();
+            List<FileInfo> files = reader.getMigrationFiles();
             assertEquals(expectedFiles, files);
         }
-        private List<String> getExpectedFiles() {
+        private List<FileInfo> getExpectedFiles() {
             Path expectedPath1 = Paths.get("C:", "github", "MigrationTool", "build", "resources", "test", "db", "migration", "V_1__test_1.sql");
             Path expectedPath2 = Paths.get("C:", "github", "MigrationTool", "build", "resources", "test", "db", "migration", "subdirectory", "V_3__test_3.sql");
-            List<String> expectedFiles = List.of(expectedPath1.toString(), expectedPath2.toString());
+            List<FileInfo> expectedFiles = List.of(new FileInfo(expectedPath2), new FileInfo(expectedPath1));
             return expectedFiles;
         }
     }
