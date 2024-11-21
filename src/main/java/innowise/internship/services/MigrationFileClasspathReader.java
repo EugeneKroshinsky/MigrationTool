@@ -1,5 +1,6 @@
 package innowise.internship.services;
 
+import innowise.internship.Factories.FileInfoFactory;
 import innowise.internship.dto.FileInfo;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,7 +35,7 @@ public class MigrationFileClasspathReader implements MigrationFileReader {
             Files.walk(path)
                     .filter(pth -> pth.toString().endsWith(".sql"))
                     .sorted()
-                    .map(FileInfo::new)
+                    .map(FileInfoFactory::createFileInfo)
                     .filter(FileInfo::isCorrect)
                     .forEach(migrationFiles::add);
         } catch (Exception e) {
