@@ -1,4 +1,4 @@
-package innowise.internship.services;
+package innowise.internship.utils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-public class SQLReader {
+public class SQLFileUtil {
     public List<String> readLines(Path path) {
         List<String> lines = new ArrayList<>();
         try{

@@ -1,20 +1,22 @@
 package innowise.internship.services;
 
 import innowise.internship.dto.FileInfo;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
 import java.util.List;
 
 @Slf4j
+@AllArgsConstructor
 public class MigrationManager {
-    private Connection connection = ConnectionManager.getConnection();
+    private Connection connection;
+    private static final String GET_VERSION = "SELECT version FROM migration_history";
 
     public List<FileInfo> getNewMigrations(List<FileInfo> migrationFiles) {
         log.info("Search new migration files");
         try(Statement statement = connection.createStatement()) {
-            String sql = "SELECT version FROM migration_history";
-            ResultSet resultSet = statement.executeQuery(sql);
+            ResultSet resultSet = statement.executeQuery(GET_VERSION);
             while (resultSet.next()) {
                 String version = resultSet.getString("version");
                 migrationFiles.removeIf(file -> file.getVersion().equals(version));
