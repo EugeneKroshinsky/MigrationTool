@@ -19,7 +19,6 @@ public class MigrationManager {
                 String version = resultSet.getString("version");
                 migrationFiles.removeIf(file -> file.getVersion().equals(version));
             }
-
         } catch (SQLException e) {
             log.error("Failed to get new migration files", e);
         }

@@ -19,6 +19,7 @@ public class SQLReader {
         }
         return lines;
     }
+
     public String read(Path path) {
         List<String> lines = readLines(path);
         StringBuilder stringBuilder = new StringBuilder();

@@ -3,7 +3,6 @@ package innowise.internship.services;
 import innowise.internship.utils.PropertiesUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

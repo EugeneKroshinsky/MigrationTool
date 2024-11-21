@@ -2,6 +2,7 @@ package innowise.internship.services;
 
 import innowise.internship.dto.FileInfo;
 import innowise.internship.utils.PropertiesUtils;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Path;
@@ -11,33 +12,55 @@ import java.util.List;
 import java.util.Properties;
 
 @Slf4j
+@AllArgsConstructor
 public class MigrationExecutor {
-    private Connection connection = ConnectionManager.getConnection();
-    private final SQLReader sqlReader = new SQLReader();
-    private final Properties properties = PropertiesUtils.getProperties("application.properties");
+    private static final String MIGRATION_HISTORY_CREATE = """
+          CREATE TABLE IF NOT EXISTS migration_history (
+                id SERIAL PRIMARY KEY,
+                version VARCHAR(255) NOT NULL,
+                description VARCHAR(255) NOT NULL,
+                type VARCHAR(255) NOT NULL,
+                script TEXT NOT NULL,
+                checksum BIGINT NOT NULL,
+                installed_by VARCHAR(255) NOT NULL,
+                installed_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                execution_time_ms BIGINT NOT NULL,
+                success BOOLEAN NOT NULL) """;
+    private static final String CONCURENCY_FLAG_CREATE = """
+          DO $$
+          BEGIN
+              IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'variables') THEN
+                  CREATE TABLE variables (
+                      key TEXT PRIMARY KEY,
+                      value BOOLEAN
+                  );
+                  INSERT INTO variables (key, value) VALUES ('concurrency_flag', false);
+              END IF;
+          END $$;""";
+    private static final String PREPARED = "INSERT INTO migration_history(version, description, type, script, checksum, installed_by, execution_time_ms, success) VALUES (?,?,?,?,?,?,?,?)";
+    private static String UPDATE_VARIABLES_FALSE = "UPDATE variables SET value = false";
+
+    private Connection connection;
+    private final SQLReader sqlReader;
+    private final Properties properties;
 
     public void createMigrationTableIfNotExist() {
         log.info("Creating migration table if not exist");
-        Path path = Paths.get(properties.getProperty("concurrency.script.path"));
-        String sqlFile = sqlReader.read(path);
         try(Statement statement = connection.createStatement()) {
-            statement.execute(sqlFile);
+            statement.execute(MIGRATION_HISTORY_CREATE);
         } catch (SQLException e) {
             log.error("Failed to create migration table", e);
         }
     }
     public void createConcurrencyTableIfNotExist() {
         log.info("Creating concurrency table if not exist");
-        Path path = Paths.get(properties.getProperty("migration.script.path"));
-        String sqlFile = sqlReader.read(path);
         try(Statement statement = connection.createStatement()) {
-            statement.execute(sqlFile);
+            statement.execute(CONCURENCY_FLAG_CREATE);
         } catch (SQLException e) {
             log.error("Failed to create concurrency table", e);
         }
     }
     public void executeMigration(List<FileInfo> migrationFiles) {
-        String PREPARED = properties.getProperty("prepared.statement.migration.history");
         try(Statement statement = connection.createStatement();
             PreparedStatement preparedStatement = connection.prepareStatement(PREPARED)) {
             connection.setAutoCommit(false);
@@ -57,7 +80,6 @@ public class MigrationExecutor {
             } catch (SQLException ex) {
                 log.error("Failed to rollback transaction", ex);
             }
-
         }
 
     }
@@ -84,13 +106,13 @@ public class MigrationExecutor {
     public void unlockDatabase() {
         log.info("Start unlocking database");
         try (Statement statement = connection.createStatement()) {
-            String query = "UPDATE variables SET value = false";
-            statement.executeUpdate(query);
+            statement.executeUpdate(UPDATE_VARIABLES_FALSE);
             log.info("Database has been unlocked");
         } catch (SQLException e) {
             log.info("Failed to unlock database", e);
         }
     }
+
     private boolean isLocked() {
         boolean isLocked = false;
         try (Statement statement = connection.createStatement()) {
