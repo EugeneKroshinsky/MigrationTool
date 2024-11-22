@@ -21,21 +21,19 @@
         @Test
         void getMigrationFilesSizeTest() {
             when(properties.getProperty("filepath")).thenReturn("db/migration");
-            List<FileInfo> expectedFiles = getExpectedFiles();
+            List<String> expectedFiles = getExpectedFiles();
             List<FileInfo> files = reader.getMigrationFiles();
             assertEquals(files.size(), expectedFiles.size());
         }
         @Test
         void getMigrationFilesValueTest() {
             when(properties.getProperty("filepath")).thenReturn("db/migration");
-            List<FileInfo> expectedFiles = getExpectedFiles();
-            List<FileInfo> files = reader.getMigrationFiles();
+            List<String> expectedFiles = getExpectedFiles();
+            List<String> files = reader.getMigrationFiles().stream().map(FileInfo::getFilename).toList();
             assertEquals(expectedFiles, files);
         }
-        private List<FileInfo> getExpectedFiles() {
-            Path expectedPath1 = Paths.get("C:", "github", "MigrationTool", "build", "resources", "test", "db", "migration", "V_1__test_1.sql");
-            Path expectedPath2 = Paths.get("C:", "github", "MigrationTool", "build", "resources", "test", "db", "migration", "subdirectory", "V_3__test_3.sql");
-            List<FileInfo> expectedFiles = List.of(new FileInfo(expectedPath2), new FileInfo(expectedPath1));
+        private List<String> getExpectedFiles() {
+            List<String> expectedFiles = List.of("V_3__test_3.sql", "V_1__test_1.sql");
             return expectedFiles;
         }
     }

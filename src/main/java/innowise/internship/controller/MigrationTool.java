@@ -1,4 +1,4 @@
-package innowise.internship;
+package innowise.internship.controller;
 
 import innowise.internship.db.ConnectionManager;
 import innowise.internship.dto.FileInfo;

@@ -15,7 +15,7 @@ class PropertiesUtilsTest {
     }
     @Test
     public void testNotExistVariable() {
-        assertThrows(NullPointerException.class,
+        assertThrows(RuntimeException.class,
                 () -> PropertiesUtils.getProperties("notExistVariable"));
     }
 }

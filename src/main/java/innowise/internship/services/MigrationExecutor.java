@@ -112,8 +112,8 @@ public class MigrationExecutor {
                                    List<FileInfo> migrationFiles) throws SQLException {
         for (FileInfo migrationFile : migrationFiles) {
             String sqlFile = sqlFileUtil.read(migrationFile.getPath());
-            statement.execute(sqlFile);
             buildPreparedStatement(migrationFile,preparedStatement);
+            statement.execute(sqlFile);
             preparedStatement.execute();
         }
     }
