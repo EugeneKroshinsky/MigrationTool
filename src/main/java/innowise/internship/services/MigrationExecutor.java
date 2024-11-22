@@ -6,6 +6,7 @@ import innowise.internship.dto.FileInfo;
 import innowise.internship.utils.SqlFileUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 
 import java.sql.*;
 import java.util.List;
@@ -28,7 +29,9 @@ public class MigrationExecutor {
     public void createConcurrencyTableIfNotExist() {
         log.info("Creating concurrency table if not exist");
         try(Statement statement = connection.createStatement()) {
-            statement.execute(SqlQueries.getConcurrencyFlagCreate(databaseType));
+            statement.addBatch(SqlQueries.getConcurrencyFlagCreateTable(databaseType));
+            statement.addBatch(SqlQueries.getConcurrencyFlagInsertValue(databaseType));
+            statement.executeBatch();
         } catch (SQLException e) {
             log.error("Failed to create concurrency table", e);
         }
@@ -37,21 +40,24 @@ public class MigrationExecutor {
     public void executeMigration(List<FileInfo> migrationFiles) {
         log.info("Start executing migrations");
         try(Statement statement = connection.createStatement();
-            PreparedStatement preparedStatement = connection.prepareStatement(SqlQueries.getInsertMigrationHistoryQuery())) {
+            PreparedStatement preparedStatement
+                    = connection.prepareStatement(SqlQueries.getInsertMigrationHistoryQuery())) {
             connection.setAutoCommit(false);
             executeMigrations(statement, preparedStatement, migrationFiles);
+            statement.executeBatch();
             connection.commit();
             connection.setAutoCommit(true);
             log.info("Commit transaction");
         } catch (SQLException e) {
-            log.error("Rollback transaction", e);
             rollback();
         }
     }
 
     public void lockDatabase() {
         log.info("Start locking database");
-        sleep();
+        while (isLocked()) {
+            sleep();
+        }
         try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(SqlQueries.getUpdateVariablesQuery(true));
             log.info("Database has been locked");
@@ -75,23 +81,25 @@ public class MigrationExecutor {
         try (Statement statement = connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery(SqlQueries.getState());
             resultSet.next();
-            isLocked = resultSet.getBoolean("value");
+            isLocked = resultSet.getBoolean("isLocked");
         } catch (SQLException e) {
             log.error("Failed to check database lock", e);
         }
         return isLocked;
     }
-
     private void executeMigrations(Statement statement,
                                    PreparedStatement preparedStatement,
-                                   List<FileInfo> migrationFiles) throws SQLException {
+                                   List<FileInfo> migrationFiles) throws SQLException{
         for (FileInfo migrationFile : migrationFiles) {
-            String sqlFile = sqlFileUtil.read(migrationFile.getPath());
+            List<String> sqlQueries = sqlFileUtil.getSeparateQueries(migrationFile.getPath());
             buildPreparedStatement(migrationFile,preparedStatement);
-            statement.execute(sqlFile);
+            for (String sqlQuery : sqlQueries) {
+                statement.addBatch(sqlQuery);
+            }
             preparedStatement.execute();
         }
     }
+
     private void buildPreparedStatement(FileInfo fileInf, PreparedStatement preparedStatement) throws SQLException {
         preparedStatement.setString(1, fileInf.getVersion());
         preparedStatement.setString(2, fileInf.getDescription());
@@ -102,23 +110,21 @@ public class MigrationExecutor {
         preparedStatement.setLong(7, 0);
         preparedStatement.setBoolean(8, true);
     }
-
     private void rollback() {
         try {
+            log.info("Rollback transaction");
             connection.rollback();
+            connection.setAutoCommit(true);
         } catch (SQLException ex) {
             log.error("Failed to rollback transaction", ex);
         }
     }
-
     private void sleep() {
-        while (isLocked()) {
-            try {
-                log.info("Waiting for unlock");
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                log.error("Failed to lock database(deadlock)", e);
-            }
+        try {
+            log.info("Waiting for unlock");
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            log.error("Failed to lock database(deadlock)", e);
         }
     }
 }

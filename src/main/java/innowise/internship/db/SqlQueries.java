@@ -29,38 +29,35 @@ public final class SqlQueries {
     }
 
     public static String getUpdateVariablesQuery(boolean value) {
-        return String.format("UPDATE variables SET value = %s", value);
+        return value ? "UPDATE concurrency SET isLocked = true"
+                : "UPDATE concurrency SET isLocked = false";
     }
 
-    public static String getConcurrencyFlagCreate(DatabaseType databaseType) {
+    public static String getConcurrencyFlagCreateTable(DatabaseType databaseType) {
+        return """
+               CREATE TABLE IF NOT EXISTS concurrency (
+                    concurrency_key VARCHAR(30) PRIMARY KEY,
+                    isLocked BOOLEAN
+               );
+               """;
+    }
+    public static String getConcurrencyFlagInsertValue(DatabaseType databaseType) {
         if (databaseType.equals(DatabaseType.POSTGRESQL)) {
             return """
-                    DO $$
-                    BEGIN
-                        IF NOT EXISTS (SELECT 1 FROM information_schema.tables 
-                            WHERE table_name = 'variables') THEN
-                            CREATE TABLE variables (
-                                key TEXT PRIMARY KEY,
-                                value BOOLEAN
-                            );
-                            INSERT INTO variables (key, value) VALUES ('concurrency_flag', false);
-                        END IF;
-                    END $$;
-                    """;
+                   INSERT INTO concurrency (concurrency_key, isLocked)
+                   VALUES ('concurrency_flag', FALSE)
+                   ON CONFLICT (concurrency_key) DO NOTHING;
+                   """;
         } else if (databaseType.equals(DatabaseType.MYSQL)) {
             return """
-                        CREATE TABLE IF NOT EXISTS `variables` (
-                            `key` VARCHAR(255) PRIMARY KEY,
-                            `value` BOOLEAN
-                        );
-                        INSERT IGNORE INTO variables (`key`, `value`)
-                        VALUES ('concurrency_flag', FALSE);
+                    INSERT IGNORE INTO concurrency (concurrency_key, isLocked)
+                    VALUES ('concurrency_flag', FALSE);
                     """;
         } else {
             throw new RuntimeException("Database type haven't define");
         }
     }
     public static String getState() {
-        return "SELECT value FROM variables";
+        return "SELECT isLocked FROM concurrency";
     }
 }

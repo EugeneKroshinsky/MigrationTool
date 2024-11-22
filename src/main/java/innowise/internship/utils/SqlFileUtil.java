@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -25,5 +26,8 @@ public class SqlFileUtil {
         StringBuilder stringBuilder = new StringBuilder();
         lines.forEach(stringBuilder::append);
         return stringBuilder.toString();
+    }
+    public List<String> getSeparateQueries(Path path) {
+        return Arrays.stream(read(path).split(";")).toList();
     }
 }
