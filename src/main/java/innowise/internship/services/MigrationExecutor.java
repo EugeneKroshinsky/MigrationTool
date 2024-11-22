@@ -6,7 +6,7 @@ import innowise.internship.dto.FileInfo;
 import innowise.internship.utils.SqlFileUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
+import org.slf4j.Marker;
 
 import java.sql.*;
 import java.util.List;
@@ -44,7 +44,6 @@ public class MigrationExecutor {
                     = connection.prepareStatement(SqlQueries.getInsertMigrationHistoryQuery())) {
             connection.setAutoCommit(false);
             executeMigrations(statement, preparedStatement, migrationFiles);
-            statement.executeBatch();
             connection.commit();
             connection.setAutoCommit(true);
             log.info("Commit transaction");
@@ -91,6 +90,7 @@ public class MigrationExecutor {
                                    PreparedStatement preparedStatement,
                                    List<FileInfo> migrationFiles) throws SQLException{
         for (FileInfo migrationFile : migrationFiles) {
+            log.info("Executing migration: {}", migrationFile.getFilename());
             List<String> sqlQueries = sqlFileUtil.getSeparateQueries(migrationFile.getPath());
             buildPreparedStatement(migrationFile,preparedStatement);
             for (String sqlQuery : sqlQueries) {
@@ -98,6 +98,7 @@ public class MigrationExecutor {
             }
             preparedStatement.execute();
         }
+        statement.executeBatch();
     }
 
     private void buildPreparedStatement(FileInfo fileInf, PreparedStatement preparedStatement) throws SQLException {
