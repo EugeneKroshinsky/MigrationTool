@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-public class SQLFileUtil {
+public class SqlFileUtil {
     public List<String> readLines(Path path) {
         List<String> lines = new ArrayList<>();
         try{

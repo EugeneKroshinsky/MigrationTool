@@ -1,6 +1,6 @@
 package innowise.internship.services;
 
-import innowise.internship.Factories.FileInfoFactory;
+import innowise.internship.factories.FileInfoFactory;
 import innowise.internship.dto.FileInfo;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
