@@ -11,6 +11,8 @@
 
 Добавьте файл application.properties со следующими параметрами подключения:
 
+Пример для PostgreSQL:
+
 `db.username`=postgres
 
 `db.password`=your_password
@@ -18,6 +20,26 @@
 `db.url`=jdbc:postgresql://localhost:5432/your_db
 
 `filepath`=your_directory_in_classpath
+
+Пример для MYSQL:
+
+`db.username`=root
+
+`db.password`=your_password
+
+`db.url`=jdbc:mysql://localhost:3306/test_db
+
+`filepath`=your_directory_in_classpath
+
+Пример для H2:
+
+db.username=sa
+
+db.password=
+
+db.url=jdbc:h2:tcp://localhost/~/test
+
+filepath=db/migration
 
 Добавьте необходимые файлы миграции в classpath.
 
