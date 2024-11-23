@@ -7,6 +7,7 @@ import java.sql.SQLException;
 public enum DatabaseType {
     MYSQL("mysql"),
     POSTGRESQL("postgresql"),
+    H2("h2"),
     UNKNOWN("unknown");
 
     private final String productName;
@@ -19,10 +20,10 @@ public enum DatabaseType {
         try {
             DatabaseMetaData metaData = connection.getMetaData();
             String productName = metaData.getDatabaseProductName().toLowerCase();
-
             return switch (productName) {
                 case "mysql" -> DatabaseType.MYSQL;
                 case "postgresql" -> DatabaseType.POSTGRESQL;
+                case "h2" -> DatabaseType.H2;
                 default -> DatabaseType.UNKNOWN;
             };
         } catch (SQLException e) {

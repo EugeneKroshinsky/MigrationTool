@@ -14,6 +14,9 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation 'org.mockito:mockito-core:5.12.0'
 
+
+    testImplementation 'com.h2database:h2:2.2.224'
+    implementation 'com.h2database:h2:2.2.224'
     implementation 'org.postgresql:postgresql:42.7.4'
     implementation 'com.mysql:mysql-connector-j:9.1.0'
 

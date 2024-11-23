@@ -42,7 +42,8 @@ public final class SqlQueries {
                """;
     }
     public static String getConcurrencyFlagInsertValue(DatabaseType databaseType) {
-        if (databaseType.equals(DatabaseType.POSTGRESQL)) {
+        if (databaseType.equals(DatabaseType.POSTGRESQL)
+                || databaseType.equals(DatabaseType.H2)) {
             return """
                    INSERT INTO concurrency (concurrency_key, isLocked)
                    VALUES ('concurrency_flag', FALSE)

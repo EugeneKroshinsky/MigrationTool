@@ -15,9 +15,9 @@ import java.util.Properties;
 @Slf4j
 public class MigrationTool {
     private static final Properties properties;
+    private static final SqlFileUtil sqlFileUtil;
     private static final MigrationFileReader migrationFileReader;
     private static final MigrationManager migrationManager;
-    private static final SqlFileUtil SQL_FILE_UTIL;
     private static final MigrationExecutor migrationExecutor;
     private static final DatabaseType databaseType;
     private static Connection connection;
@@ -25,12 +25,12 @@ public class MigrationTool {
     static {
         log.info("MigrationTool start initialization");
         properties = PropertiesUtils.getProperties("application.properties");
-        SQL_FILE_UTIL = new SqlFileUtil();
+        sqlFileUtil = new SqlFileUtil();
         connection = ConnectionManager.getConnection();
         databaseType = DatabaseType.fromConnection(connection);
         migrationManager = new MigrationManager(connection);
         migrationFileReader = new MigrationFileClasspathReader(properties);
-        migrationExecutor = new MigrationExecutor(connection, SQL_FILE_UTIL, databaseType);
+        migrationExecutor = new MigrationExecutor(connection, sqlFileUtil, databaseType);
         log.info("MigrationTool finish initialization");
     }
 

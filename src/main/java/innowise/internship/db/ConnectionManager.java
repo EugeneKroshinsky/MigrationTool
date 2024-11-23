@@ -15,10 +15,12 @@ public class ConnectionManager {
     static {
         log.info("ConnectionManager initialization");
         Properties properties = PropertiesUtils.getProperties("application.properties");
-        String url = properties.getProperty("db.url");
-        String username = properties.getProperty("db.username");
-        String password = properties.getProperty("db.password");
-
+//        String url = properties.getProperty("db.url");
+//        String username = properties.getProperty("db.username");
+//        String password = properties.getProperty("db.password");
+        String url = "jdbc:h2:tcp://localhost/~/test";
+        String username = "sa";
+        String password = "";
         try {
             connection = DriverManager.getConnection(url, username, password);
             log.info("Connection has been created");
