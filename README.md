@@ -33,13 +33,13 @@
 
 Пример для H2:
 
-db.username=sa
+`db.username`=sa
 
-db.password=
+`db.password`=
 
-db.url=jdbc:h2:tcp://localhost/~/test
+`db.url`=jdbc:h2:tcp://localhost/~/test
 
-filepath=db/migration
+`filepath`=db/migration
 
 Добавьте необходимые файлы миграции в classpath.
 
