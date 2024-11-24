@@ -30,7 +30,7 @@
 ## **Начало работы**
 
 ### **1. Подключение библиотеки**
-#### **Gradle**
+Для скачивания посетите раздел [Releases](https://github.com/EugeneKroshinsky/MigrationTool/releases/tag/migrations) в репозитории GitHub.
 Добавьте в зависимости:
 
 `gradle` Добавьте в buld.gradle:
