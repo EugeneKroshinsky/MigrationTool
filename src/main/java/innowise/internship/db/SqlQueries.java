@@ -67,4 +67,7 @@ public final class SqlQueries {
     public static String getState() {
         return "SELECT isLocked FROM concurrency";
     }
+    public static String getLastRow() {
+        return "SELECT * FROM migration_history ORDER BY version DESC LIMIT 1";
+    }
 }

@@ -23,6 +23,6 @@ public class MigrationTool {
                 log.error("Unknown command");
                 throw new RuntimeException("Unknown command");
         }
-        log.info("No more commands");
+        log.info("MigrationTool has been finished");
     }
 }

@@ -1,11 +1,10 @@
 package innowise.internship.utils;
 
 import innowise.internship.dto.FileInfo;
-import innowise.internship.services.MigrationFileClasspathReader;
-import innowise.internship.services.MigrationFileReader;
+import innowise.internship.services.migrations.MigrationFileClasspathReader;
+import innowise.internship.services.migrations.MigrationFileReader;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
