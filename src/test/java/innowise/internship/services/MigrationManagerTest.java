@@ -1,6 +1,7 @@
 package innowise.internship.services;
 
 import innowise.internship.dto.FileInfo;
+import innowise.internship.services.migrations.MigrationManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

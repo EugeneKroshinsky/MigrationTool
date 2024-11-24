@@ -1,4 +1,4 @@
-package innowise.internship.services;
+package innowise.internship.services.migrations;
 
 import innowise.internship.dto.FileInfo;
 import lombok.AllArgsConstructor;

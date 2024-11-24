@@ -1,4 +1,4 @@
-package innowise.internship.services;
+package innowise.internship.services.migrations;
 
 import innowise.internship.db.DatabaseType;
 import innowise.internship.db.SqlQueries;
