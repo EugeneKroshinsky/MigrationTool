@@ -27,6 +27,7 @@ public class SqlFileUtil {
         lines.forEach(stringBuilder::append);
         return stringBuilder.toString();
     }
+
     public List<String> getSeparateQueries(Path path) {
         return Arrays.stream(read(path).split(";")).toList();
     }

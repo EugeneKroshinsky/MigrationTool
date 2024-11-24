@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="MigrationTool:jar">
+    <output-path>$PROJECT_DIR$/out</output-path>
+    <root id="archive" name="MigrationTool.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/src/test/META-INF/MANIFEST.MF" />
+      </element>
+    </root>
+  </artifact>
+</component>

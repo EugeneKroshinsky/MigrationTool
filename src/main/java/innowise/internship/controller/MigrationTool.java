@@ -1,5 +1,6 @@
 package innowise.internship.controller;
 
+
 import innowise.internship.utils.PropertiesUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -9,6 +10,7 @@ import java.util.Properties;
 public class MigrationTool {
     private static final Properties properties = PropertiesUtils.getProperties("application.properties");
     public static void run() {
+        log.info("MigrationTool starts");
         switch (properties.getProperty("command")) {
             case "migrate":
                 MigrationController.run();

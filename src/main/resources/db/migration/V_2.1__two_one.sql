@@ -1,1 +1,0 @@
-insert into hello_world (message) values ('eeeee');

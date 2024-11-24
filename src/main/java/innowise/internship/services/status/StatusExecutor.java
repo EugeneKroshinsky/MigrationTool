@@ -16,16 +16,21 @@ public class StatusExecutor {
         log.info("Get status");
         try(Statement statement = connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery(SqlQueries.getLastRow());
-            resultSet.next();
+            return getStatusFromResultSet(resultSet);
+        } catch (SQLException e) {
+            log.error("Failed to get status", e);
+            throw new RuntimeException();
+        }
+    }
+    private Status getStatusFromResultSet(ResultSet resultSet) throws SQLException {
+        if (resultSet.next()) {
             String version = resultSet.getString("version");
             Date date = resultSet.getDate("installed_on");
             String description = resultSet.getString("description");
             String login = resultSet.getString("installed_by");
-            Status status = new Status(version, description, login, date);
-            return status;
-        } catch (SQLException e) {
-            log.error("Failed to get status", e);
-            throw new RuntimeException();
+            return new Status(version, description, login, date);
+        } else {
+            throw new RuntimeException("Failed to get status");
         }
     }
 }

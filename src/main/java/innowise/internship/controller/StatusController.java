@@ -1,7 +1,7 @@
 package innowise.internship.controller;
 
-import innowise.internship.db.ConnectionManager;
 import innowise.internship.dto.Status;
+import innowise.internship.db.ConnectionManager;
 import innowise.internship.services.status.StatusExecutor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,6 +16,7 @@ public class StatusController {
         connection = ConnectionManager.getConnection();
         statusExecutor = new StatusExecutor(connection);
     }
+
     public static void getStatus() {
         log.info("StatusController starts");
         Status status = statusExecutor.getStatus();

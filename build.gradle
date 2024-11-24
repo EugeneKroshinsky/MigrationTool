@@ -1,17 +1,21 @@
 plugins {
     id 'java'
     id 'application'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 group = 'innowise.internship'
 version = '1.0-SNAPSHOT'
-
+shadowJar {
+    mergeServiceFiles()
+}
 repositories {
     mavenCentral()
 }
 application {
     mainClass = 'innowise.internship.Main'
 }
+
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'

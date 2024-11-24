@@ -3,13 +3,18 @@ package innowise.internship.utils;
 import innowise.internship.dto.FileInfo;
 import innowise.internship.services.migrations.MigrationFileClasspathReader;
 import innowise.internship.services.migrations.MigrationFileReader;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 
+import java.io.FileReader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 class SqlFileUtilTest {
     private static final String FILE_V_1_FIRST_QUERY = """
@@ -23,9 +28,14 @@ class SqlFileUtilTest {
             """;
     private static final String FILE_V_2 = "INSERT INTO TEST (ID, NAME) VALUES (3, 'test 3');";
     private final SqlFileUtil sqlFileUtil = new SqlFileUtil();
-    private final Properties properties = PropertiesUtils.getProperties("application.properties");
+    private static final Properties properties;
     private final MigrationFileReader fileReader = new MigrationFileClasspathReader(properties);
     private final List<FileInfo> files = fileReader.getMigrationFiles();
+
+    static  {
+        properties = Mockito.mock(Properties.class);
+        when(properties.getProperty("filepath")).thenReturn("db/migration");
+    }
 
     @Test
     void readLinesV1Test() {

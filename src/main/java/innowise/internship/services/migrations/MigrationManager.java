@@ -15,6 +15,11 @@ public class MigrationManager {
 
     public List<FileInfo> getNewMigrations(List<FileInfo> migrationFiles) {
         log.info("Search new migration files");
+        findNewMigrations(migrationFiles);
+        log.info("New migration files have been found: {}", migrationFiles.size());
+        return migrationFiles;
+    }
+    private void findNewMigrations(List<FileInfo> migrationFiles) {
         try(Statement statement = connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery(GET_VERSION);
             while (resultSet.next()) {
@@ -24,7 +29,5 @@ public class MigrationManager {
         } catch (SQLException e) {
             log.error("Failed to get new migration files", e);
         }
-        log.info("New migration files have been found: {}", migrationFiles.size());
-        return migrationFiles;
     }
 }

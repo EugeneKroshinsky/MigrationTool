@@ -43,15 +43,17 @@ public class MigrationController {
         migrationExecutor.createConcurrencyTableIfNotExist();
         List<FileInfo> migrationFiles = migrationFileReader.getMigrationFiles();
         List<FileInfo> migrationFilesToExecute = migrationManager.getNewMigrations(migrationFiles);
-        if (!migrationFilesToExecute.isEmpty()) {
-            executeMigrations(migrationFilesToExecute);
-        }
+        executeMigrations(migrationFilesToExecute);
         log.info("MigrationTool finish run");
     }
 
     private static void executeMigrations(List<FileInfo> migrationFiles) {
-        migrationExecutor.lockDatabase();
-        migrationExecutor.executeMigration(migrationFiles);
-        migrationExecutor.unlockDatabase();
+        if (!migrationFiles.isEmpty()) {
+            migrationExecutor.lockDatabase();
+            migrationExecutor.executeMigration(migrationFiles);
+            migrationExecutor.unlockDatabase();
+        } else {
+            log.info("No new migrations to execute");
+        }
     }
 }

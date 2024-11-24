@@ -30,11 +30,13 @@ public class MigrationFileClasspathReader implements MigrationFileReader {
     }
     private URL getResource() {
         String resourcePath = properties.getProperty("filepath");
-        URL resource = getClass().getClassLoader().getResource(resourcePath);
-        if (resource == null) {
-            throw new IllegalArgumentException("Resource path not found: " + resourcePath);
+        try {
+            URL resource = getClass().getClassLoader().getResource(resourcePath);
+            return resource;
+        } catch (NullPointerException e) {
+            log.error("Failed to load migration files", e);
+            throw new RuntimeException("Failed to load migration files", e);
         }
-        return resource;
     }
     private List<FileInfo> createListOfMigrations(URL resource) {
         List<FileInfo> migrationFiles = new ArrayList<>();
@@ -46,8 +48,8 @@ public class MigrationFileClasspathReader implements MigrationFileReader {
                     .filter(FileInfo::isCorrect)
                     .sorted()
                     .forEach(migrationFiles::add);
-        } catch (IOException | URISyntaxException e) {
-            log.error("Failed to load migration files", e);
+        } catch (IOException | URISyntaxException | NullPointerException e) {
+            log.error("Failed to load migration files, maybe you didn't declare folder", e);
             throw new RuntimeException("Failed to load migration files", e);
         }
         return migrationFiles;
