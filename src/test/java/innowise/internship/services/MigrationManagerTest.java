@@ -25,27 +25,16 @@ class MigrationManagerTest {
 
     @BeforeEach
      void setUp() throws SQLException {
-
         connection = Mockito.mock(Connection.class);
         statement = Mockito.mock(Statement.class);
         resultSet = Mockito.mock(ResultSet.class);
-
         when(connection.createStatement()).thenReturn(statement);
         when(statement.executeQuery(Mockito.anyString())).thenReturn(resultSet);
-        Mockito.when(resultSet.next())
-                .thenReturn(true)
-                .thenReturn(true)
-                .thenReturn(false);
+        Mockito.when(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(false);
 
         migrationManager = new MigrationManager(connection);
         when(resultSet.getString(Mockito.anyString())).thenReturn("1.0");
-        List<FileInfo> migrationFiles = new ArrayList<>();
-        FileInfo fileInfo1 = new FileInfo();
-        fileInfo1.setVersion("1.0");
-        migrationFiles.add(fileInfo1);
-        FileInfo fileInfo2 = new FileInfo();
-        fileInfo2.setVersion("1.1");
-        migrationFiles.add(fileInfo2);
+        List<FileInfo> migrationFiles = getMigrationFiles();
         files = migrationManager.getNewMigrations(migrationFiles);
     }
 
@@ -56,5 +45,16 @@ class MigrationManagerTest {
     @Test
     void getMigrationsValueTest() throws SQLException {
         assertEquals("1.1", files.get(0).getVersion());
+    }
+
+    private List<FileInfo> getMigrationFiles() {
+        List<FileInfo> migrationFiles = new ArrayList<>();
+        FileInfo fileInfo = new FileInfo();
+        fileInfo.setVersion("1.0");
+        migrationFiles.add(fileInfo);
+        fileInfo = new FileInfo();
+        fileInfo.setVersion("1.1");
+        migrationFiles.add(fileInfo);
+        return migrationFiles;
     }
 }
