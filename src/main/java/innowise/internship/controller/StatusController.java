@@ -18,7 +18,7 @@ public class StatusController {
     }
     public static void getStatus() {
         log.info("StatusController starts");
-        Status status =statusExecutor.getStatus();
+        Status status = statusExecutor.getStatus();
         log.info("Status: {}", status);
     }
 }
