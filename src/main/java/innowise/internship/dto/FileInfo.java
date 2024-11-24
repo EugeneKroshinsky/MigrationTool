@@ -19,6 +19,7 @@ public class FileInfo implements Comparable<FileInfo> {
     private String type;
     private String actionType;
     private boolean isCorrect;
+
     @Override
     public int compareTo(FileInfo other) {
         if (this.version == null && other.version == null) {

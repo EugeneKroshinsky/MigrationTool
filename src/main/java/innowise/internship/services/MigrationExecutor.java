@@ -6,7 +6,6 @@ import innowise.internship.dto.FileInfo;
 import innowise.internship.utils.SqlFileUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Marker;
 
 import java.sql.*;
 import java.util.List;
