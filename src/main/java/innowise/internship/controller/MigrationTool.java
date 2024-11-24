@@ -1,20 +1,27 @@
 package innowise.internship.controller;
 
+import innowise.internship.utils.PropertiesUtils;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Properties;
 
 @Slf4j
 public class MigrationTool {
-    private static final MigrationController migrationController = new MigrationController();;
-    public static void run(String[] args) {
-        for (String arg : args) {
-            switch (arg.toLowerCase()) {
-                case "migrate":
-                    migrationController.run();
-                    break;
-                default:
-                    log.error("Unknown command");
-                    throw new RuntimeException("Unknown command");
-            }
+    private static final Properties properties = PropertiesUtils.getProperties("application.properties");
+    public static void run() {
+        switch (properties.getProperty("command")) {
+            case "migrate":
+                MigrationController.run();
+                break;
+            case "status":
+                StatusController.getStatus();
+                break;
+            case "rollback":
+                RollbackController.rollback();
+                break;
+            default:
+                log.error("Unknown command");
+                throw new RuntimeException("Unknown command");
         }
         log.info("No more commands");
     }
