@@ -14,10 +14,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SqlFileUtilTest {
     private static final String FILE_V_1_FIRST_QUERY = """
-            CREATE TABLE TEST {
+            CREATE TABLE TEST (
                 ID INT PRIMARY KEY,
                 NAME VARCHAR(255)
-            };
+            );
             """;
     private static final String FILE_V_1_SECOND_QUERY = """
             INSERT INTO TEST (ID, NAME) VALUES (1, 'test 1');
@@ -27,27 +27,48 @@ class SqlFileUtilTest {
     private final Properties properties = PropertiesUtils.getProperties("application.properties");
     private final MigrationFileReader fileReader = new MigrationFileClasspathReader(properties);
     private final List<FileInfo> files = fileReader.getMigrationFiles();
+
     @Test
     void readLinesV1Test() {
-        List<String> lines1 = sqlFileUtil.readLines(files.get(0).getPath());
+        List<String> lines = sqlFileUtil.readLines(files.get(0).getPath());
         String query = FILE_V_1_FIRST_QUERY + FILE_V_1_SECOND_QUERY;
         List<String> expectedLines = Arrays.stream(query.split("\n")).toList();
-        assertEquals(expectedLines, lines1);
+        assertEquals(expectedLines, lines);
     }
 
     @Test
     void readLinesV2Test() {
-        List<String> lines2 = sqlFileUtil.readLines(files.get(1).getPath());
-        assertEquals(List.of(FILE_V_2), lines2);
+        List<String> lines = sqlFileUtil.readLines(files.get(1).getPath());
+        assertEquals(List.of(FILE_V_2), lines);
     }
 
     @Test
-    void read() {
-
+    void readV1Test() {
+        String fileStr = sqlFileUtil.read(files.get(0).getPath());
+        String query = (FILE_V_1_FIRST_QUERY + FILE_V_1_SECOND_QUERY)
+                .replace("\n", "");
+        assertEquals(query, fileStr);
     }
 
     @Test
-    void getSeparateQueries() {
+    void readV2Test() {
+        String fileStr = sqlFileUtil.read(files.get(1).getPath());
+        String query = FILE_V_2;
+        assertEquals(query, fileStr);
+    }
 
+    @Test
+    void getSeparateQueriesV1Test() {
+        List<String> queries = sqlFileUtil.getSeparateQueries(files.get(0).getPath());
+        String firstQuery = FILE_V_1_FIRST_QUERY.replace("\n", "").replace(";", "");
+        String secondQuery = FILE_V_1_SECOND_QUERY.replace("\n", "").replace(";", "");
+        List<String> expectedQueries = List.of(firstQuery, secondQuery);
+        assertEquals(expectedQueries, queries);
+    }
+    @Test
+    void getSeparateQueriesV2Test() {
+        List<String> queries = sqlFileUtil.getSeparateQueries(files.get(1).getPath());
+        List<String> expectedQueries = List.of(FILE_V_2.replace(";", ""));
+        assertEquals(expectedQueries, queries);
     }
 }
