@@ -42,9 +42,9 @@ public class MigrationFileClasspathReader implements MigrationFileReader {
             Path path = Paths.get(resource.toURI());
             Files.walk(path)
                     .filter(pth -> pth.toString().endsWith(".sql"))
-                    .sorted()
                     .map(FileInfoFactory::createFileInfo)
                     .filter(FileInfo::isCorrect)
+                    .sorted()
                     .forEach(migrationFiles::add);
         } catch (IOException | URISyntaxException e) {
             log.error("Failed to load migration files", e);
