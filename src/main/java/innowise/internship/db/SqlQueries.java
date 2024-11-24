@@ -42,8 +42,7 @@ public final class SqlQueries {
                """;
     }
     public static String getConcurrencyFlagInsertValue(DatabaseType databaseType) {
-        if (databaseType.equals(DatabaseType.POSTGRESQL)
-                || databaseType.equals(DatabaseType.H2)) {
+        if (databaseType.equals(DatabaseType.POSTGRESQL)) {
             return """
                    INSERT INTO concurrency (concurrency_key, isLocked)
                    VALUES ('concurrency_flag', FALSE)
@@ -54,7 +53,14 @@ public final class SqlQueries {
                     INSERT IGNORE INTO concurrency (concurrency_key, isLocked)
                     VALUES ('concurrency_flag', FALSE);
                     """;
-        } else {
+        }else if (databaseType.equals(DatabaseType.H2)) {
+            return """
+                    MERGE INTO concurrency (concurrency_key, isLocked)
+                    KEY (concurrency_key)
+                    VALUES ('concurrency_flag', FALSE);
+                    """;
+        }
+        else {
             throw new RuntimeException("Database type haven't define");
         }
     }
