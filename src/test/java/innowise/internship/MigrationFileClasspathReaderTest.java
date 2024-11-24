@@ -33,7 +33,7 @@
             assertEquals(expectedFiles, files);
         }
         private List<String> getExpectedFiles() {
-            List<String> expectedFiles = List.of("V_3__test_3.sql", "V_1__test_1.sql");
+            List<String> expectedFiles = List.of("V_1__test_1.sql", "V_3__test_3.sql");
             return expectedFiles;
         }
     }

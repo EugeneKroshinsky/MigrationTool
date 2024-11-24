@@ -18,7 +18,6 @@ public class ConnectionManager {
         String url = properties.getProperty("db.url");
         String username = properties.getProperty("db.username");
         String password = properties.getProperty("db.password");
-
         try {
             connection = DriverManager.getConnection(url, username, password);
             log.info("Connection has been created");

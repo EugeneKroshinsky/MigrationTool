@@ -1,6 +1,6 @@
 package innowise.internship.services;
 
-import innowise.internship.Factories.FileInfoFactory;
+import innowise.internship.factories.FileInfoFactory;
 import innowise.internship.dto.FileInfo;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,9 +42,9 @@ public class MigrationFileClasspathReader implements MigrationFileReader {
             Path path = Paths.get(resource.toURI());
             Files.walk(path)
                     .filter(pth -> pth.toString().endsWith(".sql"))
-                    .sorted()
                     .map(FileInfoFactory::createFileInfo)
                     .filter(FileInfo::isCorrect)
+                    .sorted()
                     .forEach(migrationFiles::add);
         } catch (IOException | URISyntaxException e) {
             log.error("Failed to load migration files", e);

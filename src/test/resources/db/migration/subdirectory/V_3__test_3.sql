@@ -1,0 +1,1 @@
+INSERT INTO TEST (ID, NAME) VALUES (3, 'test 3');

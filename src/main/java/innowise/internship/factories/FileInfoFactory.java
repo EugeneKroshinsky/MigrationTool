@@ -1,4 +1,4 @@
-package innowise.internship.Factories;
+package innowise.internship.factories;
 
 import innowise.internship.dto.FileInfo;
 
