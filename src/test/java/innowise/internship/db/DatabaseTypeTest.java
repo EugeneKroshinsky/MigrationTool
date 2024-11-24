@@ -14,6 +14,7 @@ import static org.mockito.Mockito.when;
 class DatabaseTypeTest {
     private static Connection connection;
     private static DatabaseMetaData metaData;
+
     @BeforeAll
     static void setUp() {
         connection = Mockito.mock(Connection.class);
@@ -26,23 +27,23 @@ class DatabaseTypeTest {
     }
     @Test
     void fromConnectionMysqlTest() {
-        try {
-            when(metaData.getDatabaseProductName()).thenReturn("mysql");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        getMockType("mysql");
         DatabaseType databaseType = DatabaseType.fromConnection(connection);
         assertEquals(DatabaseType.MYSQL, databaseType);
     }
 
     @Test
     void fromConnectionWrongValueTest() {
+        getMockType("wrong value");
+        DatabaseType databaseType = DatabaseType.fromConnection(connection);
+        assertEquals(DatabaseType.UNKNOWN, databaseType);
+    }
+
+    private void getMockType(String value) {
         try {
-            when(metaData.getDatabaseProductName()).thenReturn("wrong value");
+            when(metaData.getDatabaseProductName()).thenReturn(value);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        DatabaseType databaseType = DatabaseType.fromConnection(connection);
-        assertEquals(DatabaseType.UNKNOWN, databaseType);
     }
 }
