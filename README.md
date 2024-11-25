@@ -133,3 +133,11 @@ implementation 'ch.qos.logback:logback-classic:1.5.12'
 
 ```
 
+### **CLI**
+В версии [MigrationTollV1.1]([https://github.com/EugeneKroshinsky/MigrationTool/releases/tag/migrations](https://github.com/EugeneKroshinsky/MigrationTool/releases/tag/migrationsv1.1))
+Добавлен вызов из командной строки. В директории с jar-файлом спользуйте следующую клманду:
+```
+java -jar MigrationTool-1.1-SNAPSHOT-all.jar your_files_location command your_username your_password database_url
+```
+Пока что это функция не протестирована до конца. 
+
